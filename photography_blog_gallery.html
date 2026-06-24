@@ -1,0 +1,315 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);color:var(--color-text-primary)}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+.hdr{padding:1.5rem 0 1rem;border-bottom:0.5px solid var(--color-border-tertiary);margin-bottom:1.5rem}
+.hdr-top{display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:1rem}
+.blog-name{font-size:11px;letter-spacing:0.1em;color:var(--color-text-secondary);text-transform:uppercase;margin-bottom:4px}
+.hdr h1{font-size:22px;font-weight:500}
+.hdr-actions{display:flex;gap:8px;align-items:center}
+.icon-btn{width:34px;height:34px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:var(--color-text-secondary);transition:background 0.12s}
+.icon-btn:hover{background:var(--color-background-secondary)}
+.icon-btn.active{background:var(--color-text-primary);color:var(--color-background-primary);border-color:var(--color-text-primary)}
+.filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.filter-pill{padding:5px 14px;font-size:12px;border-radius:20px;border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-secondary);cursor:pointer;transition:all 0.12s}
+.filter-pill:hover{background:var(--color-background-secondary)}
+.filter-pill.on{background:var(--color-text-primary);color:var(--color-background-primary);border-color:var(--color-text-primary)}
+.count-badge{font-size:11px;color:var(--color-text-secondary);margin-left:auto}
+.gallery-grid{display:grid;gap:12px;transition:all 0.2s}
+.gallery-grid.cols3{grid-template-columns:repeat(3,1fr)}
+.gallery-grid.cols2{grid-template-columns:repeat(2,1fr)}
+.gallery-grid.cols1{grid-template-columns:1fr}
+.gallery-grid.masonry{columns:3;column-gap:12px}
+.photo-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;cursor:pointer;transition:border-color 0.15s}
+.photo-card:hover{border-color:var(--color-border-primary)}
+.masonry .photo-card{break-inside:avoid;margin-bottom:12px;display:block}
+.img-wrap{position:relative;overflow:hidden}
+.photo-img{width:100%;display:block;object-fit:cover;transition:transform 0.3s}
+.photo-card:hover .photo-img{transform:scale(1.03)}
+.cols3 .img-wrap{height:180px}
+.cols2 .img-wrap{height:240px}
+.cols1 .img-wrap{height:320px}
+.masonry .img-wrap{height:auto}
+.masonry .photo-img{height:auto}
+.img-overlay{position:absolute;inset:0;background:rgba(0,0,0,0);transition:background 0.2s;display:flex;align-items:flex-end;padding:12px}
+.photo-card:hover .img-overlay{background:rgba(0,0,0,0.25)}
+.overlay-actions{display:flex;gap:6px;opacity:0;transform:translateY(6px);transition:all 0.2s}
+.photo-card:hover .overlay-actions{opacity:1;transform:translateY(0)}
+.ov-btn{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,0.9);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;color:#111}
+.ov-btn:hover{background:#fff}
+.ov-btn.liked{color:#e24b4a}
+.card-body{padding:10px 12px 12px}
+.card-cat{font-size:10px;letter-spacing:0.07em;text-transform:uppercase;color:var(--color-text-secondary);margin-bottom:4px}
+.card-title{font-size:13px;font-weight:500;margin-bottom:4px;line-height:1.4}
+.card-meta{display:flex;align-items:center;justify-content:space-between}
+.card-author{font-size:11px;color:var(--color-text-secondary);display:flex;align-items:center;gap:5px}
+.avatar-xs{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:500;flex-shrink:0}
+.card-likes{font-size:11px;color:var(--color-text-secondary);display:flex;align-items:center;gap:3px}
+.search-wrap{position:relative;margin-bottom:1rem}
+.search-wrap input{width:100%;padding-left:34px;font-size:13px}
+.search-wrap .ti{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:16px;color:var(--color-text-secondary);pointer-events:none}
+.lightbox-bg{position:absolute;inset:0;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;z-index:100;min-height:500px}
+.lightbox-bg.hidden{display:none}
+.lightbox{background:var(--color-background-primary);border-radius:var(--border-radius-lg);border:0.5px solid var(--color-border-tertiary);max-width:560px;width:calc(100% - 2rem);overflow:hidden}
+.lb-img-wrap{position:relative;background:#000}
+.lb-img{width:100%;display:block;max-height:340px;object-fit:cover}
+.lb-nav{position:absolute;top:50%;transform:translateY(-50%);display:flex;justify-content:space-between;width:100%;padding:0 10px;pointer-events:none}
+.lb-btn{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.85);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;color:#111;pointer-events:all}
+.lb-btn:hover{background:#fff}
+.lb-close{position:absolute;top:10px;right:10px;width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,0.5);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:#fff}
+.lb-close:hover{background:rgba(0,0,0,0.75)}
+.lb-info{padding:14px 16px}
+.lb-cat{font-size:10px;letter-spacing:0.07em;text-transform:uppercase;color:var(--color-text-secondary);margin-bottom:4px}
+.lb-title{font-size:16px;font-weight:500;margin-bottom:6px}
+.lb-desc{font-size:13px;color:var(--color-text-secondary);line-height:1.6;margin-bottom:12px}
+.lb-footer{display:flex;align-items:center;justify-content:space-between}
+.lb-author{display:flex;align-items:center;gap:8px}
+.avatar-sm{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500}
+.lb-author-name{font-size:13px;font-weight:500}
+.lb-author-loc{font-size:11px;color:var(--color-text-secondary)}
+.lb-actions{display:flex;gap:6px}
+.lb-act-btn{display:flex;align-items:center;gap:5px;font-size:12px;padding:5px 10px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);cursor:pointer;background:var(--color-background-secondary);color:var(--color-text-secondary)}
+.lb-act-btn:hover{background:var(--color-background-tertiary)}
+.lb-act-btn.liked{color:#e24b4a;border-color:#f09595}
+.empty{text-align:center;padding:3rem 1rem;color:var(--color-text-secondary);font-size:14px}
+.empty i{font-size:32px;display:block;margin-bottom:8px;opacity:0.4}
+</style>
+
+<h2 class="sr-only">Responsive photography blog gallery with lightbox, filters, search, and multiple layout views</h2>
+
+<div style="padding:0 0 2rem">
+
+<div class="hdr">
+  <div class="hdr-top">
+    <div>
+      <div class="blog-name">Aperture Stories</div>
+      <h1>Photo journal</h1>
+    </div>
+    <div class="hdr-actions">
+      <button class="icon-btn" onclick="setLayout('cols3')" id="btn-cols3" title="3-column grid" aria-label="3 columns"><i class="ti ti-layout-grid"></i></button>
+      <button class="icon-btn" onclick="setLayout('cols2')" id="btn-cols2" title="2-column grid" aria-label="2 columns"><i class="ti ti-columns-2"></i></button>
+      <button class="icon-btn" onclick="setLayout('cols1')" id="btn-cols1" title="Single column" aria-label="1 column"><i class="ti ti-layout-list"></i></button>
+      <button class="icon-btn" onclick="setLayout('masonry')" id="btn-masonry" title="Masonry" aria-label="Masonry"><i class="ti ti-layout-masonry"></i></button>
+    </div>
+  </div>
+  <div class="search-wrap">
+    <i class="ti ti-search" aria-hidden="true"></i>
+    <input type="text" placeholder="Search photos, places, tags…" oninput="onSearch(this.value)" aria-label="Search photos">
+  </div>
+  <div class="filters">
+    <button class="filter-pill on" onclick="setFilter('all',this)">All</button>
+    <button class="filter-pill" onclick="setFilter('landscape',this)">Landscape</button>
+    <button class="filter-pill" onclick="setFilter('portrait',this)">Portrait</button>
+    <button class="filter-pill" onclick="setFilter('street',this)">Street</button>
+    <button class="filter-pill" onclick="setFilter('macro',this)">Macro</button>
+    <button class="filter-pill" onclick="setFilter('architecture',this)">Architecture</button>
+    <span class="count-badge" id="countBadge">18 photos</span>
+  </div>
+</div>
+
+<div id="galleryWrap" style="position:relative">
+  <div class="gallery-grid cols3" id="gallery" role="list"></div>
+  <div class="lightbox-bg hidden" id="lightboxBg" onclick="closeLightbox(event)">
+    <div class="lightbox" onclick="event.stopPropagation()" role="dialog" aria-modal="true" aria-label="Photo detail">
+      <div class="lb-img-wrap">
+        <img class="lb-img" id="lbImg" src="" alt="">
+        <button class="lb-close" onclick="closeLb()" aria-label="Close"><i class="ti ti-x"></i></button>
+        <div class="lb-nav">
+          <button class="lb-btn" onclick="lbNav(-1)" aria-label="Previous photo"><i class="ti ti-chevron-left"></i></button>
+          <button class="lb-btn" onclick="lbNav(1)" aria-label="Next photo"><i class="ti ti-chevron-right"></i></button>
+        </div>
+      </div>
+      <div class="lb-info">
+        <div class="lb-cat" id="lbCat"></div>
+        <div class="lb-title" id="lbTitle"></div>
+        <div class="lb-desc" id="lbDesc"></div>
+        <div class="lb-footer">
+          <div class="lb-author">
+            <div class="avatar-sm" id="lbAvatar"></div>
+            <div><div class="lb-author-name" id="lbAuthorName"></div><div class="lb-author-loc" id="lbAuthorLoc"></div></div>
+          </div>
+          <div class="lb-actions">
+            <button class="lb-act-btn" id="lbLikeBtn" onclick="lbToggleLike()"><i class="ti ti-heart" id="lbLikeIcon"></i> <span id="lbLikeCount"></span></button>
+            <button class="lb-act-btn" onclick="lbShare()"><i class="ti ti-share"></i> Share</button>
+            <button class="lb-act-btn"><i class="ti ti-download"></i> Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+const photos = [
+  { id:1, cat:'landscape', title:'Golden hour, Santorini', desc:'Warm evening light spills across whitewashed domes and the deep blue of the Aegean.', author:'Elena V.', loc:'Santorini, Greece', av:'EV', avc:'#b5d4f4', avtc:'#0c447c', likes:284, liked:false,
+    src:'https://images.unsplash.com/photo-1613395877344-13d4a8e0d49e?w=800&q=80', th:'landscape' },
+  { id:2, cat:'portrait', title:'Morning light', desc:'A quiet portrait captured in soft diffused light from a north-facing window.', author:'Kai S.', loc:'Tokyo, Japan', av:'KS', avc:'#9fe1cb', avtc:'#085041', likes:193, liked:false,
+    src:'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=800&q=80', th:'portrait' },
+  { id:3, cat:'street', title:'Rainy night, Shibuya', desc:'Neon reflections on wet asphalt — the city pulses even in the rain.', author:'Mei L.', loc:'Tokyo, Japan', av:'ML', avc:'#fac775', avtc:'#633806', likes:412, liked:false,
+    src:'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=800&q=80', th:'street' },
+  { id:4, cat:'macro', title:'Dewdrop on a petal', desc:'A single drop holds the entire garden in its curve — patience rewarded at f/2.8.', author:'Sara B.', loc:'Amsterdam, NL', av:'SB', avc:'#cecbf6', avtc:'#3c3489', likes:156, liked:false,
+    src:'https://images.unsplash.com/photo-1490750967868-88df5691cc71?w=800&q=80', th:'macro' },
+  { id:5, cat:'architecture', title:'Brutalist curve', desc:'Mid-century concrete catches afternoon shadow in long, clean lines.', author:'Tom R.', loc:'Marseille, France', av:'TR', avc:'#d3d1c7', avtc:'#444441', likes:98, liked:false,
+    src:'https://images.unsplash.com/photo-1486325212027-8081e485255e?w=800&q=80', th:'architecture' },
+  { id:6, cat:'landscape', title:'Misty fjord', desc:'Low cloud clings to the valley walls as the water below stays perfectly still.', author:'Erik N.', loc:'Geiranger, Norway', av:'EN', avc:'#85b7eb', avtc:'#0c447c', likes:337, liked:false,
+    src:'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80', th:'landscape' },
+  { id:7, cat:'portrait', title:'Street vendor, Hanoi', desc:'Character etched over decades — one frame was enough.', author:'Linh P.', loc:'Hanoi, Vietnam', av:'LP', avc:'#f5c4b3', avtc:'#712b13', likes:521, liked:false,
+    src:'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=800&q=80', th:'portrait' },
+  { id:8, cat:'macro', title:'Cobalt wings', desc:'A morpho butterfly rests long enough to reveal the iridescence hidden in each scale.', author:'Ana G.', loc:'Costa Rica', av:'AG', avc:'#c0dd97', avtc:'#27500a', likes:274, liked:false,
+    src:'https://images.unsplash.com/photo-1444927714506-8492d94b4e3d?w=800&q=80', th:'macro' },
+  { id:9, cat:'street', title:'Alley, Marrakech', desc:'Winding ochre lanes and the distant call to prayer — the medina in one frame.', author:'Youssef A.', loc:'Marrakech, Morocco', av:'YA', avc:'#fac775', avtc:'#633806', likes:389, liked:false,
+    src:'https://images.unsplash.com/photo-1539020140153-e479b8c22e70?w=800&q=80', th:'street' },
+  { id:10, cat:'architecture', title:'Glass & steel', desc:'The facade becomes abstract at close range — a grid of sky and reflection.', author:'Tom R.', loc:'Chicago, USA', av:'TR', avc:'#d3d1c7', avtc:'#444441', likes:143, liked:false,
+    src:'https://images.unsplash.com/photo-1486325212027-8081e485255e?w=800&q=80', th:'architecture' },
+  { id:11, cat:'landscape', title:'Wheat fields, Tuscany', desc:'Late June gold stretches to the cypress line at the ridge.', author:'Elena V.', loc:'Tuscany, Italy', av:'EV', avc:'#b5d4f4', avtc:'#0c447c', likes:201, liked:false,
+    src:'https://images.unsplash.com/photo-1523531294919-4bcd7c65e216?w=800&q=80', th:'landscape' },
+  { id:12, cat:'portrait', title:'The beekeeper', desc:'Calm in the midst of thousands — trust built over a lifetime of seasons.', author:'Sara B.', loc:'Provence, France', av:'SB', avc:'#cecbf6', avtc:'#3c3489', likes:448, liked:false,
+    src:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80', th:'portrait' },
+  { id:13, cat:'street', title:'Neon, Hong Kong', desc:'Looking up from a narrow lane, the signs compress into a vertical river of light.', author:'Mei L.', loc:'Hong Kong', av:'ML', avc:'#fac775', avtc:'#633806', likes:502, liked:false,
+    src:'https://images.unsplash.com/photo-1536431311719-398b6704d4cc?w=800&q=80', th:'street' },
+  { id:14, cat:'macro', title:'Frost on glass', desc:'Winter writes its own geometry overnight on a single pane.', author:'Erik N.', loc:'Tromsø, Norway', av:'EN', avc:'#85b7eb', avtc:'#0c447c', likes:167, liked:false,
+    src:'https://images.unsplash.com/photo-1522163182402-834f871fd851?w=800&q=80', th:'macro' },
+  { id:15, cat:'architecture', title:'Panthéon dome', desc:'18th-century geometry meets afternoon sun through the lantern above.', author:'Linh P.', loc:'Paris, France', av:'LP', avc:'#f5c4b3', avtc:'#712b13', likes:229, liked:false,
+    src:'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=800&q=80', th:'architecture' },
+  { id:16, cat:'landscape', title:'Desert dunes, Erg Chebbi', desc:'Wind-sculpted ridges run to the horizon — a landscape with no fixed point.', author:'Youssef A.', loc:'Merzouga, Morocco', av:'YA', avc:'#fac775', avtc:'#633806', likes:318, liked:false,
+    src:'https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=800&q=80', th:'landscape' },
+  { id:17, cat:'portrait', title:'Reflection', desc:'A self-portrait in a hand-held mirror, found at a flea market the same morning.', author:'Ana G.', loc:'Buenos Aires, AR', av:'AG', avc:'#c0dd97', avtc:'#27500a', likes:376, liked:false,
+    src:'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=800&q=80', th:'portrait' },
+  { id:18, cat:'macro', title:'Honeycomb section', desc:'Geometry that predates architecture by millions of years.', author:'Kai S.', loc:'Kyoto, Japan', av:'KS', avc:'#9fe1cb', avtc:'#085041', likes:211, liked:false,
+    src:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80', th:'macro' },
+];
+
+let activeFilter = 'all';
+let activeLayout = 'cols3';
+let searchQ = '';
+let lbIdx = 0;
+let filtered = [...photos];
+
+function getFiltered() {
+  let r = photos;
+  if (activeFilter !== 'all') r = r.filter(p => p.cat === activeFilter);
+  if (searchQ) {
+    const q = searchQ.toLowerCase();
+    r = r.filter(p => p.title.toLowerCase().includes(q) || p.loc.toLowerCase().includes(q) || p.cat.includes(q) || p.author.toLowerCase().includes(q));
+  }
+  return r;
+}
+
+function render() {
+  filtered = getFiltered();
+  const g = document.getElementById('gallery');
+  g.className = 'gallery-grid ' + activeLayout;
+  document.getElementById('countBadge').textContent = filtered.length + ' photo' + (filtered.length !== 1 ? 's' : '');
+  if (!filtered.length) {
+    g.innerHTML = '<div class="empty" style="grid-column:1/-1"><i class="ti ti-photo-off" aria-hidden="true"></i>No photos match your search.</div>';
+    return;
+  }
+  g.innerHTML = filtered.map((p, i) => `
+    <div class="photo-card" role="listitem" onclick="openLb(${i})" tabindex="0" onkeydown="if(event.key==='Enter')openLb(${i})" aria-label="${p.title} by ${p.author}">
+      <div class="img-wrap">
+        <img class="photo-img" src="${p.src}" alt="${p.title}" loading="lazy" style="height:${activeLayout==='masonry'?'auto':activeLayout==='cols1'?'320px':activeLayout==='cols2'?'240px':'180px'}">
+        <div class="img-overlay">
+          <div class="overlay-actions">
+            <button class="ov-btn ${p.liked?'liked':''}" onclick="event.stopPropagation();toggleLike(${p.id},this)" aria-label="${p.liked?'Unlike':'Like'}"><i class="ti ti-heart"></i></button>
+            <button class="ov-btn" onclick="event.stopPropagation()" aria-label="Share"><i class="ti ti-share"></i></button>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-cat">${p.cat}</div>
+        <div class="card-title">${p.title}</div>
+        <div class="card-meta">
+          <span class="card-author">
+            <span class="avatar-xs" style="background:${p.avc};color:${p.avtc}">${p.av}</span>
+            ${p.author}
+          </span>
+          <span class="card-likes"><i class="ti ti-heart" style="font-size:12px" aria-hidden="true"></i> ${p.likes}</span>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function setFilter(cat, btn) {
+  activeFilter = cat;
+  document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  render();
+}
+
+function setLayout(l) {
+  activeLayout = l;
+  ['cols3','cols2','cols1','masonry'].forEach(k => {
+    const b = document.getElementById('btn-'+k);
+    if (b) b.classList.toggle('active', k === l);
+  });
+  render();
+}
+
+function onSearch(v) { searchQ = v; render(); }
+
+function toggleLike(id, btn) {
+  const p = photos.find(x => x.id === id);
+  if (!p) return;
+  p.liked = !p.liked;
+  p.likes += p.liked ? 1 : -1;
+  btn.classList.toggle('liked', p.liked);
+  render();
+}
+
+function openLb(i) {
+  lbIdx = i;
+  showLb();
+}
+
+function showLb() {
+  const p = filtered[lbIdx];
+  if (!p) return;
+  document.getElementById('lbImg').src = p.src;
+  document.getElementById('lbImg').alt = p.title;
+  document.getElementById('lbCat').textContent = p.cat;
+  document.getElementById('lbTitle').textContent = p.title;
+  document.getElementById('lbDesc').textContent = p.desc;
+  document.getElementById('lbAvatar').textContent = p.av;
+  document.getElementById('lbAvatar').style.background = p.avc;
+  document.getElementById('lbAvatar').style.color = p.avtc;
+  document.getElementById('lbAuthorName').textContent = p.author;
+  document.getElementById('lbAuthorLoc').textContent = p.loc;
+  document.getElementById('lbLikeCount').textContent = p.likes;
+  const lb = document.getElementById('lbLikeBtn');
+  lb.classList.toggle('liked', p.liked);
+  document.getElementById('lbLikeIcon').className = 'ti ti-heart';
+  document.getElementById('lightboxBg').classList.remove('hidden');
+}
+
+function closeLb() { document.getElementById('lightboxBg').classList.add('hidden'); }
+function closeLightbox(e) { if (e.target === document.getElementById('lightboxBg')) closeLb(); }
+
+function lbNav(dir) {
+  lbIdx = (lbIdx + dir + filtered.length) % filtered.length;
+  showLb();
+}
+
+function lbToggleLike() {
+  const p = filtered[lbIdx];
+  p.liked = !p.liked;
+  p.likes += p.liked ? 1 : -1;
+  document.getElementById('lbLikeCount').textContent = p.likes;
+  document.getElementById('lbLikeBtn').classList.toggle('liked', p.liked);
+  render();
+}
+
+function lbShare() {}
+
+document.addEventListener('keydown', e => {
+  if (document.getElementById('lightboxBg').classList.contains('hidden')) return;
+  if (e.key === 'Escape') closeLb();
+  if (e.key === 'ArrowRight') lbNav(1);
+  if (e.key === 'ArrowLeft') lbNav(-1);
+});
+
+setLayout('cols3');
+render();
+</script>
