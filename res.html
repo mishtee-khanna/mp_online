@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La Fiamma — Restaurant</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, -apple-system, sans-serif; background: #f5f4f0; color: #1a1a18; min-height: 100vh; }
+  .page { max-width: 780px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+
+  /* Hero */
+  .hero { background: linear-gradient(135deg, #1a0a00 0%, #3d1a00 100%); border-radius: 16px; padding: 2.5rem 2rem 2rem; margin-bottom: 1.5rem; position: relative; overflow: hidden; }
+  .hero::before { content: ''; position: absolute; inset: 0; background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><circle cx="150" cy="50" r="80" fill="%23ff6b2b" opacity="0.08"/><circle cx="30" cy="170" r="60" fill="%23ff9f43" opacity="0.06"/></svg>'); }
+  .hero-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,107,43,0.2); border: 0.5px solid rgba(255,107,43,0.4); border-radius: 20px; padding: 4px 12px; font-size: 12px; color: #ffbb88; margin-bottom: 1rem; position: relative; }
+  .hero h1 { font-size: 32px; font-weight: 500; color: #fff; margin-bottom: 6px; position: relative; }
+  .hero-sub { font-size: 14px; color: rgba(255,255,255,0.55); margin-bottom: 1.25rem; position: relative; }
+  .hero-meta { display: flex; gap: 1.5rem; font-size: 13px; color: rgba(255,255,255,0.65); position: relative; flex-wrap: wrap; }
+  .hero-meta span { display: flex; align-items: center; gap: 5px; }
+
+  /* Media / Audio Bar */
+  .media-bar { background: #fff; border: 0.5px solid rgba(0,0,0,0.1); border-radius: 16px; padding: 1rem 1.25rem; margin-bottom: 1.5rem; }
+  .media-bar-label { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 5px; }
+  .media-controls { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .btn-icon { width: 38px; height: 38px; border-radius: 50%; border: 0.5px solid rgba(0,0,0,0.15); background: #f5f4f0; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 17px; color: #1a1a18; transition: background 0.15s; }
+  .btn-icon:hover { background: #ebe9e3; }
+  .btn-icon.active { background: #ff6b2b; border-color: #ff6b2b; color: #fff; }
+  .track-info { flex: 1; min-width: 140px; }
+  .track-title { font-size: 13px; font-weight: 500; }
+  .track-sub { font-size: 11px; color: #888; margin-top: 2px; }
+  .progress-wrap { display: flex; align-items: center; gap: 10px; flex: 2; min-width: 160px; }
+  .progress-time { font-size: 11px; color: #888; min-width: 28px; }
+  .progress-bar { flex: 1; height: 4px; background: rgba(0,0,0,0.1); border-radius: 2px; cursor: pointer; }
+  .progress-fill { height: 100%; border-radius: 2px; background: #ff6b2b; transition: width 0.5s linear; }
+  .volume-wrap { display: flex; align-items: center; gap: 6px; }
+  .vol-bar { width: 70px; height: 4px; background: rgba(0,0,0,0.1); border-radius: 2px; cursor: pointer; }
+  .vol-fill { height: 100%; border-radius: 2px; background: #ff6b2b; }
+
+  /* Tabs */
+  .tabs { display: flex; border-bottom: 0.5px solid rgba(0,0,0,0.1); margin-bottom: 1.5rem; }
+  .tab { padding: 10px 18px; font-size: 14px; cursor: pointer; color: #888; border: none; border-bottom: 2px solid transparent; margin-bottom: -0.5px; background: none; transition: all 0.15s; }
+  .tab.active { color: #ff6b2b; border-bottom-color: #ff6b2b; }
+  .section { display: none; }
+  .section.visible { display: block; }
+
+  /* Filter */
+  .filter-row { display: flex; gap: 8px; margin-bottom: 1.25rem; flex-wrap: wrap; }
+  .filter-btn { padding: 6px 14px; font-size: 12px; border: 0.5px solid rgba(0,0,0,0.15); border-radius: 20px; cursor: pointer; color: #888; background: #fff; transition: all 0.15s; }
+  .filter-btn.active { background: #ff6b2b; border-color: #ff6b2b; color: #fff; }
+  .filter-btn:hover:not(.active) { background: #f5f4f0; }
+
+  /* Menu */
+  .category-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #888; margin: 1.25rem 0 0.75rem; padding-bottom: 4px; border-bottom: 0.5px solid rgba(0,0,0,0.08); }
+  .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+  .menu-card { background: #fff; border: 0.5px solid rgba(0,0,0,0.08); border-radius: 16px; padding: 1rem; display: flex; gap: 12px; cursor: pointer; transition: border-color 0.15s; }
+  .menu-card:hover { border-color: rgba(0,0,0,0.2); }
+  .menu-card.selected { border-color: #ff6b2b; }
+  .dish-icon { width: 52px; height: 52px; border-radius: 10px; background: #fff5ef; display: flex; align-items: center; justify-content: center; font-size: 26px; flex-shrink: 0; }
+  .dish-name { font-size: 14px; font-weight: 500; margin-bottom: 3px; }
+  .dish-desc { font-size: 12px; color: #666; line-height: 1.5; margin-bottom: 6px; }
+  .dish-footer { display: flex; align-items: center; justify-content: space-between; }
+  .dish-price { font-size: 15px; font-weight: 500; color: #e05b1f; }
+  .dish-tags { display: flex; gap: 4px; flex-wrap: wrap; }
+  .tag { font-size: 10px; padding: 2px 7px; border-radius: 10px; background: #f5f4f0; color: #888; border: 0.5px solid rgba(0,0,0,0.08); }
+  .tag.spicy { background: #fff0eb; color: #c44a1a; border-color: #ffd0bb; }
+  .tag.veg { background: #eaf3de; color: #3b6d11; border-color: #c0dd97; }
+  .tag.new { background: #e6f1fb; color: #185fa5; border-color: #85b7eb; }
+
+  /* Reviews */
+  .reviews-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 12px; }
+  .rating-big { display: flex; align-items: baseline; gap: 8px; }
+  .rating-num { font-size: 42px; font-weight: 500; color: #e8a020; }
+  .stars { display: flex; gap: 2px; }
+  .star { color: #e8a020; font-size: 14px; }
+  .star.empty { color: #ccc; }
+  .bars-wrap { display: flex; flex-direction: column; gap: 5px; }
+  .bar-row { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+  .bar-label { color: #888; width: 10px; text-align: right; }
+  .bar-bg { flex: 1; height: 6px; background: rgba(0,0,0,0.08); border-radius: 3px; overflow: hidden; max-width: 120px; }
+  .bar-fg { height: 100%; background: #e8a020; border-radius: 3px; }
+  .bar-count { color: #888; font-size: 11px; width: 28px; }
+  .reviews-list { display: flex; flex-direction: column; gap: 12px; }
+  .review-card { background: #fff; border: 0.5px solid rgba(0,0,0,0.08); border-radius: 16px; padding: 1rem 1.25rem; }
+  .review-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; gap: 8px; }
+  .reviewer { display: flex; align-items: center; gap: 10px; }
+  .avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 500; flex-shrink: 0; }
+  .reviewer-name { font-size: 14px; font-weight: 500; }
+  .reviewer-meta { font-size: 11px; color: #888; }
+  .review-date { font-size: 11px; color: #888; flex-shrink: 0; }
+  .review-text { font-size: 13px; color: #555; line-height: 1.65; }
+  .review-dish-badge { display: inline-flex; align-items: center; gap: 5px; background: #f5f4f0; border: 0.5px solid rgba(0,0,0,0.08); border-radius: 12px; padding: 3px 10px; font-size: 11px; color: #888; margin-top: 8px; }
+  .helpful-row { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+  .helpful-btn { display: flex; align-items: center; gap: 5px; font-size: 12px; color: #888; background: #f5f4f0; border: 0.5px solid rgba(0,0,0,0.1); border-radius: 20px; padding: 4px 10px; cursor: pointer; transition: all 0.15s; }
+  .helpful-btn:hover { background: #ebe9e3; }
+  .helpful-btn.liked { color: #e05b1f; border-color: #ffbb88; }
+
+  /* Media tab */
+  .gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 1.5rem; }
+  .gallery-item { aspect-ratio: 1; border-radius: 10px; background: #ebe9e3; display: flex; align-items: center; justify-content: center; font-size: 42px; cursor: pointer; border: 0.5px solid rgba(0,0,0,0.08); transition: border-color 0.15s; }
+  .gallery-item:hover { border-color: rgba(0,0,0,0.2); }
+  .video-card { background: #fff; border: 0.5px solid rgba(0,0,0,0.08); border-radius: 16px; padding: 1rem; display: flex; gap: 12px; align-items: center; margin-bottom: 10px; }
+  .video-thumb { width: 72px; height: 52px; background: #1a0a00; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .play-overlay { width: 28px; height: 28px; border-radius: 50%; background: rgba(255,107,43,0.9); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 13px; }
+  .video-info { flex: 1; }
+  .video-title { font-size: 13px; font-weight: 500; margin-bottom: 3px; }
+  .video-meta { font-size: 11px; color: #888; }
+  .video-controls-mini { display: flex; gap: 6px; }
+  .mini-btn { padding: 5px 10px; font-size: 11px; border: 0.5px solid rgba(0,0,0,0.12); border-radius: 16px; cursor: pointer; color: #555; background: #f5f4f0; display: flex; align-items: center; gap: 4px; }
+  .mini-btn:hover { background: #ebe9e3; }
+
+  /* Video player */
+  .video-player { background: #fff; border: 0.5px solid rgba(0,0,0,0.08); border-radius: 16px; padding: 1rem; margin-top: 1.25rem; }
+  .video-player-label { font-size: 13px; font-weight: 500; margin-bottom: 0.75rem; }
+  .video-screen { background: #1a0a00; border-radius: 10px; height: 180px; display: flex; align-items: center; justify-content: center; margin-bottom: 0.75rem; position: relative; }
+  .video-play-center { text-align: center; }
+  .video-play-btn { width: 52px; height: 52px; border-radius: 50%; background: rgba(255,107,43,0.85); display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; cursor: pointer; border: none; }
+  .video-play-btn i { color: #fff; font-size: 22px; }
+  .video-screen-label { color: rgba(255,255,255,0.5); font-size: 12px; }
+  .video-seek-bar { position: absolute; bottom: 10px; left: 10px; right: 10px; display: flex; align-items: center; gap: 8px; }
+  .video-time { font-size: 11px; color: rgba(255,255,255,0.5); }
+  .video-track { flex: 1; height: 3px; background: rgba(255,255,255,0.15); border-radius: 2px; cursor: pointer; }
+  .video-track-fill { height: 100%; border-radius: 2px; background: #ff6b2b; transition: width 0.5s linear; }
+  .video-bottom { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+  .video-left-ctrl { display: flex; gap: 8px; align-items: center; }
+  .video-right-ctrl { display: flex; align-items: center; gap: 8px; }
+  .speed-select { font-size: 12px; padding: 4px 8px; border: 0.5px solid rgba(0,0,0,0.15); border-radius: 8px; background: #f5f4f0; color: #1a1a18; cursor: pointer; }
+  .section-sub-label { font-size: 12px; font-weight: 500; color: #888; margin-bottom: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; }
+</style>
+</head>
+<body>
+<main class="page" role="main">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-badge"><i class="ti ti-flame" aria-hidden="true"></i> Fine Italian Dining</div>
+    <h1>La Fiamma</h1>
+    <p class="hero-sub">Authentic Neapolitan cuisine · Open since 1998</p>
+    <div class="hero-meta">
+      <span><i class="ti ti-map-pin" aria-hidden="true"></i> 14 Via Roma, Little Italy</span>
+      <span><i class="ti ti-clock" aria-hidden="true"></i> 12:00 – 23:00 daily</span>
+      <span><i class="ti ti-star-filled" style="color:#e8a020" aria-hidden="true"></i> 4.7 · 1,284 reviews</span>
+      <span><i class="ti ti-phone" aria-hidden="true"></i> +1 (212) 555-0171</span>
+    </div>
+  </div>
+
+  <!-- Audio Player Bar -->
+  <div class="media-bar" role="region" aria-label="Ambient music player">
+    <div class="media-bar-label"><i class="ti ti-music" aria-hidden="true"></i> Ambient playlist — currently playing</div>
+    <div class="media-controls">
+      <button class="btn-icon" onclick="prevTrack()" aria-label="Previous track"><i class="ti ti-player-skip-back"></i></button>
+      <button class="btn-icon active" id="playBtn" onclick="togglePlay()" aria-label="Pause">
+        <i class="ti ti-player-pause" id="playIcon"></i>
+      </button>
+      <button class="btn-icon" onclick="nextTrack()" aria-label="Next track"><i class="ti ti-player-skip-forward"></i></button>
+      <div class="track-info">
+        <div class="track-title" id="trackTitle">Volare — Dean Martin</div>
+        <div class="track-sub" id="trackSub">Jazz Italia · 3:42</div>
+      </div>
+      <div class="progress-wrap">
+        <span class="progress-time" id="elapsed">1:24</span>
+        <div class="progress-bar" onclick="seekTo(event)" role="slider" aria-label="Playback position" aria-valuemin="0" aria-valuemax="100" aria-valuenow="38">
+          <div class="progress-fill" id="progressFill" style="width:38%"></div>
+        </div>
+        <span class="progress-time" id="duration">3:42</span>
+      </div>
+      <button class="btn-icon" onclick="toggleShuffle()" id="shuffleBtn" aria-label="Shuffle"><i class="ti ti-arrows-shuffle"></i></button>
+      <div class="volume-wrap">
+        <button class="btn-icon" style="width:30px;height:30px;font-size:14px" onclick="toggleMute()" id="muteBtn" aria-label="Mute">
+          <i class="ti ti-volume" id="volIcon"></i>
+        </button>
+        <div class="vol-bar" onclick="setVolume(event)" role="slider" aria-label="Volume" aria-valuemin="0" aria-valuemax="100" aria-valuenow="70">
+          <div class="vol-fill" id="volFill" style="width:70%"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs" role="tablist">
+    <button class="tab active" onclick="switchTab('menu',this)" role="tab" aria-selected="true">Menu</button>
+    <button class="tab" onclick="switchTab('reviews',this)" role="tab" aria-selected="false">Reviews</button>
+    <button class="tab" onclick="switchTab('media',this)" role="tab" aria-selected="false">Photos & Video</button>
+  </div>
+
+  <!-- Menu Tab -->
+  <div id="tab-menu" class="section visible" role="tabpanel">
+    <div class="filter-row" role="group" aria-label="Menu category filters">
+      <button class="filter-btn active" onclick="filterMenu('all',this)">All</button>
+      <button class="filter-btn" onclick="filterMenu('starter',this)">Starters</button>
+      <button class="filter-btn" onclick="filterMenu('pasta',this)">Pasta</button>
+      <button class="filter-btn" onclick="filterMenu('pizza',this)">Pizza</button>
+      <button class="filter-btn" onclick="filterMenu('dessert',this)">Dessert</button>
+      <button class="filter-btn" onclick="filterMenu('drink',this)">Drinks</button>
+    </div>
+    <div id="menuContent"></div>
+  </div>
+
+  <!-- Reviews Tab -->
+  <div id="tab-reviews" class="section" role="tabpanel">
+    <div class="reviews-header">
+      <div class="rating-big">
+        <div class="rating-num">4.7</div>
+        <div>
+          <div class="stars" aria-label="4.7 out of 5 stars">
+            <i class="ti ti-star-filled star"></i><i class="ti ti-star-filled star"></i>
+            <i class="ti ti-star-filled star"></i><i class="ti ti-star-filled star"></i>
+            <i class="ti ti-star-half-filled star"></i>
+          </div>
+          <p style="font-size:12px;color:#888;margin-top:4px">Based on 1,284 reviews</p>
+        </div>
+      </div>
+      <div class="bars-wrap">
+        <div class="bar-row"><span class="bar-label">5</span><div class="bar-bg"><div class="bar-fg" style="width:78%"></div></div><span class="bar-count">987</span></div>
+        <div class="bar-row"><span class="bar-label">4</span><div class="bar-bg"><div class="bar-fg" style="width:16%"></div></div><span class="bar-count">208</span></div>
+        <div class="bar-row"><span class="bar-label">3</span><div class="bar-bg"><div class="bar-fg" style="width:4%"></div></div><span class="bar-count">51</span></div>
+        <div class="bar-row"><span class="bar-label">2</span><div class="bar-bg"><div class="bar-fg" style="width:2%"></div></div><span class="bar-count">26</span></div>
+        <div class="bar-row"><span class="bar-label">1</span><div class="bar-bg"><div class="bar-fg" style="width:1%"></div></div><span class="bar-count">12</span></div>
+      </div>
+    </div>
+    <div class="filter-row" role="group" aria-label="Review star filters">
+      <button class="filter-btn active" onclick="filterReviews('all',this)">All</button>
+      <button class="filter-btn" onclick="filterReviews(5,this)">5 stars</button>
+      <button class="filter-btn" onclick="filterReviews(4,this)">4 stars</button>
+      <button class="filter-btn" onclick="filterReviews(3,this)">3 stars</button>
+    </div>
+    <div class="reviews-list" id="reviewsList"></div>
+  </div>
+
+  <!-- Media Tab -->
+  <div id="tab-media" class="section" role="tabpanel">
+    <p style="font-size:13px;color:#888;margin-bottom:1rem">158 photos · 12 videos by guests and staff</p>
+    <div class="gallery-grid" role="list">
+      <div class="gallery-item" role="listitem" tabindex="0">🍕</div>
+      <div class="gallery-item" role="listitem" tabindex="0">🍝</div>
+      <div class="gallery-item" role="listitem" tabindex="0">🥗</div>
+      <div class="gallery-item" role="listitem" tabindex="0">🍷</div>
+      <div class="gallery-item" role="listitem" tabindex="0">🍰</div>
+      <div class="gallery-item" role="listitem" tabindex="0">🪔</div>
+    </div>
+    <p class="section-sub-label">Featured videos</p>
+    <div id="videoList"></div>
+
+    <div class="video-player" role="region" aria-label="Video player">
+      <p class="video-player-label">Video playback</p>
+      <div class="video-screen">
+        <div class="video-play-center">
+          <button class="video-play-btn" onclick="toggleVideo()" id="videoBigBtn" aria-label="Play video">
+            <i class="ti ti-player-play" id="videoBigIcon"></i>
+          </button>
+          <p class="video-screen-label" id="videoStatusText">Chef Marco's Kitchen Tour</p>
+        </div>
+        <div class="video-seek-bar">
+          <span class="video-time" id="vElapsed">0:00</span>
+          <div class="video-track" onclick="seekVideo(event)" role="slider" aria-label="Video position" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <div class="video-track-fill" id="vProgress" style="width:0%"></div>
+          </div>
+          <span class="video-time">8:45</span>
+        </div>
+      </div>
+      <div class="video-bottom">
+        <div class="video-left-ctrl">
+          <button class="btn-icon" style="width:32px;height:32px;font-size:15px" onclick="videoBack()" aria-label="Rewind 10 seconds"><i class="ti ti-rewind"></i></button>
+          <button class="btn-icon active" onclick="toggleVideo()" id="videoCtrlBtn" aria-label="Play video"><i class="ti ti-player-play" id="videoCtrlIcon"></i></button>
+          <button class="btn-icon" style="width:32px;height:32px;font-size:15px" onclick="videoFwd()" aria-label="Forward 10 seconds"><i class="ti ti-fast-forward"></i></button>
+        </div>
+        <div class="video-right-ctrl">
+          <label for="speedSelect" style="font-size:12px;color:#888">Speed</label>
+          <select id="speedSelect" class="speed-select" onchange="setSpeed(this.value)" aria-label="Playback speed">
+            <option>0.5×</option><option selected>1×</option><option>1.5×</option><option>2×</option>
+          </select>
+          <button class="btn-icon" style="width:32px;height:32px;font-size:14px" aria-label="Subtitles"><i class="ti ti-subtitles"></i></button>
+          <button class="btn-icon" style="width:32px;height:32px;font-size:14px" aria-label="Picture in picture"><i class="ti ti-picture-in-picture"></i></button>
+          <button class="btn-icon" style="width:32px;height:32px;font-size:14px" onclick="toggleFS()" aria-label="Fullscreen"><i class="ti ti-maximize" id="fsIcon"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+const menu = [
+  { cat:'starter', name:'Bruschetta al Pomodoro', desc:'Grilled sourdough, fresh tomatoes, basil, garlic, extra virgin olive oil', price:'$12', emoji:'🍅', tags:['veg'] },
+  { cat:'starter', name:'Burrata Pugliese', desc:'Creamy burrata with roasted cherry tomatoes & Sicilian pistachios', price:'$16', emoji:'🧀', tags:['veg','new'] },
+  { cat:'starter', name:'Polpo alla Griglia', desc:'Char-grilled octopus, Nduja aioli, crispy capers, lemon', price:'$22', emoji:'🐙', tags:[] },
+  { cat:'pasta', name:'Tagliatelle al Ragù', desc:'12-hour slow-cooked Bolognese, egg tagliatelle, Parmigiano Reggiano', price:'$26', emoji:'🍝', tags:[] },
+  { cat:'pasta', name:'Cacio e Pepe', desc:'Spaghetti, Pecorino Romano, Parmigiano, freshly cracked black pepper', price:'$22', emoji:'🍴', tags:['veg'] },
+  { cat:'pasta', name:'Pappardelle Tartufate', desc:'Black truffle, wild mushrooms, thyme, aged Pecorino — chef\'s signature', price:'$34', emoji:'🌿', tags:['veg','new'] },
+  { cat:'pizza', name:'Margherita DOP', desc:'San Marzano tomatoes, Fior di Latte, fresh basil, EVOO', price:'$20', emoji:'🍕', tags:['veg'] },
+  { cat:'pizza', name:'Diavola Piccante', desc:'Spicy Calabrian salami, mozzarella, fresh chilli, Nduja crumble', price:'$24', emoji:'🌶️', tags:['spicy'] },
+  { cat:'pizza', name:'Quattro Formaggi', desc:'Gorgonzola, Taleggio, Mozzarella, Parmigiano, honey drizzle', price:'$26', emoji:'🧀', tags:['veg'] },
+  { cat:'dessert', name:'Tiramisù della Casa', desc:'Savoiardi soaked in espresso, mascarpone cream, dark cocoa dusting', price:'$14', emoji:'☕', tags:[] },
+  { cat:'dessert', name:'Panna Cotta', desc:'Vanilla bean cream, wild berry coulis, candied pistachios', price:'$12', emoji:'🍮', tags:['veg'] },
+  { cat:'drink', name:'Aperol Spritz', desc:'Aperol, Prosecco, soda, fresh orange — the Italian classic', price:'$16', emoji:'🍊', tags:[] },
+  { cat:'drink', name:'Barolo 2018', desc:'Giacomo Conterno, Piedmont — a bold and structured Nebbiolo', price:'$24', emoji:'🍷', tags:[] },
+];
+
+const reviews = [
+  { name:'Sophia R.', init:'SR', col:'#b5d4f4', textCol:'#0c447c', rating:5, date:'Jun 2026', text:'Honestly the best Italian food I\'ve had outside of Naples. The Pappardelle Tartufate is absolutely divine — rich, earthy and deeply satisfying. Staff went out of their way for our anniversary.', dish:'Pappardelle Tartufate', helpful:47, liked:false },
+  { name:'Marco D.', init:'MD', col:'#9fe1cb', textCol:'#085041', rating:5, date:'May 2026', text:'La Fiamma never disappoints. Came for a work dinner and the whole table was blown away. The Barolo recommendation from the sommelier was spot on. Burrata was creamy perfection.', dish:'Burrata Pugliese', helpful:31, liked:false },
+  { name:'Priya K.', init:'PK', col:'#f4c0d1', textCol:'#72243e', rating:4, date:'Apr 2026', text:'Lovely restaurant with great food. The Tiramisù is genuinely one of the best I\'ve had. Docking one star only because the wait was longer than expected on a Friday evening, but totally worth it.', dish:'Tiramisù della Casa', helpful:19, liked:false },
+  { name:'James T.', init:'JT', col:'#fac775', textCol:'#633806', rating:5, date:'Apr 2026', text:'Exceptional from start to finish. The Cacio e Pepe was silky, perfectly seasoned and arrived exactly al dente. The playlist in the background really transports you to Rome. Highly recommended.', dish:'Cacio e Pepe', helpful:28, liked:false },
+  { name:'Elena B.', init:'EB', col:'#cecbf6', textCol:'#3c3489', rating:3, date:'Mar 2026', text:'Food is good but slightly overpriced for the portion sizes. The Bruschetta was a bit dry, although the Panna Cotta redeemed the meal. Service was attentive and friendly though.', dish:'Bruschetta al Pomodoro', helpful:8, liked:false },
+];
+
+const videos = [
+  { title:"Chef Marco's Kitchen Tour", meta:"8:45 · Staff exclusive · 2.3k views" },
+  { title:"Live pasta making at the table", meta:"4:12 · Guest upload · 1.1k views" },
+  { title:"La Fiamma — A dining experience", meta:"2:30 · Official promo · 8.7k views" },
+];
+
+const tracks = [
+  { title:'Volare — Dean Martin', sub:'Jazz Italia · 3:42', dur:222 },
+  { title:"O Sole Mio — Luciano Pavarotti", sub:'Classics Italia · 4:15', dur:255 },
+  { title:'Azzurro — Adriano Celentano', sub:'Pop Italia · 3:58', dur:238 },
+];
+
+let trackIdx = 0, elapsed = 84, isPlaying = true;
+let isMuted = false, isShuffle = false, volume = 70;
+let vElapsedSec = 0, isVideoPlaying = false;
+let audioInterval = null, videoInterval = null;
+
+function fmt(s) { return Math.floor(s/60) + ':' + String(s%60).padStart(2,'0'); }
+
+// Audio controls
+function togglePlay() {
+  isPlaying = !isPlaying;
+  document.getElementById('playIcon').className = isPlaying ? 'ti ti-player-pause' : 'ti ti-player-play';
+  document.getElementById('playBtn').setAttribute('aria-label', isPlaying ? 'Pause' : 'Play');
+  isPlaying ? startAudio() : stopAudio();
+}
+function startAudio() {
+  clearInterval(audioInterval);
+  audioInterval = setInterval(() => {
+    elapsed = Math.min(elapsed + 1, tracks[trackIdx].dur);
+    const pct = Math.round(elapsed / tracks[trackIdx].dur * 100);
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('elapsed').textContent = fmt(elapsed);
+    if (elapsed >= tracks[trackIdx].dur) nextTrack();
+  }, 1000);
+}
+function stopAudio() { clearInterval(audioInterval); }
+function prevTrack() { trackIdx = (trackIdx - 1 + tracks.length) % tracks.length; loadTrack(); }
+function nextTrack() { trackIdx = (trackIdx + 1) % tracks.length; loadTrack(); }
+function loadTrack() {
+  elapsed = 0;
+  const t = tracks[trackIdx];
+  document.getElementById('trackTitle').textContent = t.title;
+  document.getElementById('trackSub').textContent = t.sub;
+  document.getElementById('duration').textContent = fmt(t.dur);
+  document.getElementById('elapsed').textContent = '0:00';
+  document.getElementById('progressFill').style.width = '0%';
+  if (isPlaying) startAudio();
+}
+function seekTo(e) {
+  const pct = Math.max(0, Math.min(1, e.offsetX / e.currentTarget.offsetWidth));
+  elapsed = Math.round(pct * tracks[trackIdx].dur);
+  document.getElementById('progressFill').style.width = Math.round(pct*100) + '%';
+  document.getElementById('elapsed').textContent = fmt(elapsed);
+}
+function toggleMute() {
+  isMuted = !isMuted;
+  document.getElementById('volIcon').className = isMuted ? 'ti ti-volume-off' : 'ti ti-volume';
+  document.getElementById('volFill').style.width = isMuted ? '0%' : volume + '%';
+  document.getElementById('muteBtn').setAttribute('aria-label', isMuted ? 'Unmute' : 'Mute');
+}
+function setVolume(e) {
+  volume = Math.round(Math.max(0, Math.min(1, e.offsetX / e.currentTarget.offsetWidth)) * 100);
+  document.getElementById('volFill').style.width = volume + '%';
+  isMuted = false;
+  document.getElementById('volIcon').className = 'ti ti-volume';
+}
+function toggleShuffle() {
+  isShuffle = !isShuffle;
+  document.getElementById('shuffleBtn').classList.toggle('active', isShuffle);
+}
+
+// Video controls
+function toggleVideo() {
+  isVideoPlaying = !isVideoPlaying;
+  const icon = isVideoPlaying ? 'ti ti-player-pause' : 'ti ti-player-play';
+  document.getElementById('videoBigIcon').className = icon;
+  document.getElementById('videoCtrlIcon').className = icon;
+  const lbl = isVideoPlaying ? 'Pause' : 'Play';
+  document.getElementById('videoCtrlBtn').setAttribute('aria-label', lbl);
+  isVideoPlaying ? startVideo() : stopVideo();
+}
+function startVideo() {
+  clearInterval(videoInterval);
+  videoInterval = setInterval(() => {
+    vElapsedSec = Math.min(vElapsedSec + 1, 525);
+    document.getElementById('vProgress').style.width = Math.round(vElapsedSec/525*100) + '%';
+    document.getElementById('vElapsed').textContent = fmt(vElapsedSec);
+    if (vElapsedSec >= 525) { isVideoPlaying = false; stopVideo(); }
+  }, 1000);
+}
+function stopVideo() { clearInterval(videoInterval); }
+function videoBack() { vElapsedSec = Math.max(0, vElapsedSec - 10); updateVideoUI(); }
+function videoFwd() { vElapsedSec = Math.min(525, vElapsedSec + 10); updateVideoUI(); }
+function updateVideoUI() {
+  document.getElementById('vProgress').style.width = Math.round(vElapsedSec/525*100) + '%';
+  document.getElementById('vElapsed').textContent = fmt(vElapsedSec);
+}
+function seekVideo(e) {
+  const pct = Math.max(0, Math.min(1, e.offsetX / e.currentTarget.offsetWidth));
+  vElapsedSec = Math.round(pct * 525);
+  updateVideoUI();
+}
+function setSpeed(v) { /* attach to real video element if needed */ }
+function toggleFS() {
+  const i = document.getElementById('fsIcon');
+  i.className = i.className.includes('maximize') ? 'ti ti-minimize' : 'ti ti-maximize';
+}
+
+// Tabs
+function switchTab(tab, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('visible'));
+  document.querySelectorAll('.tab').forEach(t => { t.classList.remove('active'); t.setAttribute('aria-selected','false'); });
+  document.getElementById('tab-'+tab).classList.add('visible');
+  btn.classList.add('active');
+  btn.setAttribute('aria-selected','true');
+}
+
+// Menu render
+function filterMenu(f, btn) {
+  document.querySelectorAll('#tab-menu .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderMenu(f);
+}
+function renderMenu(filter) {
+  const filtered = filter === 'all' ? menu : menu.filter(i => i.cat === filter);
+  const cats = [...new Set(filtered.map(i => i.cat))];
+  let html = '';
+  cats.forEach(cat => {
+    html += `<div class="category-label">${cat.charAt(0).toUpperCase()+cat.slice(1)}s</div><div class="menu-grid">`;
+    filtered.filter(i => i.cat === cat).forEach(item => {
+      const tags = item.tags.map(t =>
+        `<span class="tag ${t}">${t==='veg'?'🌿 Veg':t==='spicy'?'🌶️ Spicy':'✨ New'}</span>`
+      ).join('');
+      html += `<div class="menu-card" onclick="this.classList.toggle('selected')" role="button" tabindex="0" aria-label="${item.name}, ${item.price}">
+        <div class="dish-icon" aria-hidden="true">${item.emoji}</div>
+        <div>
+          <div class="dish-name">${item.name}</div>
+          <div class="dish-desc">${item.desc}</div>
+          <div class="dish-footer">
+            <span class="dish-price">${item.price}</span>
+            <div class="dish-tags">${tags}</div>
+          </div>
+        </div>
+      </div>`;
+    });
+    html += '</div>';
+  });
+  document.getElementById('menuContent').innerHTML = html;
+}
+
+// Reviews render
+function filterReviews(f, btn) {
+  document.querySelectorAll('#tab-reviews .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderReviews(f);
+}
+function toggleHelpful(idx, btn) {
+  reviews[idx].liked = !reviews[idx].liked;
+  reviews[idx].helpful += reviews[idx].liked ? 1 : -1;
+  btn.classList.toggle('liked', reviews[idx].liked);
+  btn.querySelector('.helpCount').textContent = reviews[idx].helpful;
+}
+function renderReviews(filter) {
+  const filtered = filter === 'all' ? reviews : reviews.filter(r => r.rating === filter);
+  let html = '';
+  filtered.forEach((r, idx) => {
+    const stars = [1,2,3,4,5].map(s =>
+      `<i class="ti ${s<=r.rating?'ti-star-filled':'ti-star'} star ${s>r.rating?'empty':''}" aria-hidden="true"></i>`
+    ).join('');
+    html += `<div class="review-card">
+      <div class="review-top">
+        <div class="reviewer">
+          <div class="avatar" style="background:${r.col};color:${r.textCol}" aria-hidden="true">${r.init}</div>
+          <div><div class="reviewer-name">${r.name}</div><div class="reviewer-meta">Verified diner</div></div>
+        </div>
+        <span class="review-date">${r.date}</span>
+      </div>
+      <div class="stars" aria-label="${r.rating} out of 5 stars">${stars}</div>
+      <p class="review-text" style="margin-top:8px">${r.text}</p>
+      <div class="review-dish-badge"><i class="ti ti-tools-kitchen-2" aria-hidden="true"></i> ${r.dish}</div>
+      <div class="helpful-row">
+        <button class="helpful-btn ${r.liked?'liked':''}" onclick="toggleHelpful(${idx},this)">
+          <i class="ti ti-thumb-up" aria-hidden="true"></i> <span class="helpCount">${r.helpful}</span> helpful
+        </button>
+        <button class="helpful-btn"><i class="ti ti-flag" aria-hidden="true"></i> Report</button>
+      </div>
+    </div>`;
+  });
+  document.getElementById('reviewsList').innerHTML = html ||
+    '<p style="color:#888;font-size:13px">No reviews for this rating.</p>';
+}
+
+// Videos render
+function renderVideos() {
+  let html = '';
+  videos.forEach(v => {
+    html += `<div class="video-card">
+      <div class="video-thumb"><div class="play-overlay"><i class="ti ti-player-play" aria-hidden="true"></i></div></div>
+      <div class="video-info"><div class="video-title">${v.title}</div><div class="video-meta">${v.meta}</div></div>
+      <div class="video-controls-mini">
+        <button class="mini-btn"><i class="ti ti-player-play" aria-hidden="true"></i> Play</button>
+        <button class="mini-btn" aria-label="Share"><i class="ti ti-share" aria-hidden="true"></i></button>
+      </div>
+    </div>`;
+  });
+  document.getElementById('videoList').innerHTML = html;
+}
+
+// Init
+renderMenu('all');
+renderReviews('all');
+renderVideos();
+startAudio();
+</script>
+</body>
+</html>
