@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quarterly Sales Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f7fa;
+            margin: 0;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h2 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #000000;
+            font-weight: bold;
+        }
+        .table-container {
+            border: 2px solid #333333;
+            padding: 8px;
+            background-color: #ffffff;
+            max-width: 1000px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        table {
+            border-collapse: separate;
+            border-spacing: 6px;
+            width: 100%;
+            text-align: center;
+        }
+        th, td {
+            padding: 12px 10px;
+            font-size: 15px;
+            border: 1px solid #b0b0b0;
+            vertical-align: middle;
+        }
+        /* Header styles */
+        th {
+            background-color: #4CAF50;
+            color: white;
+            font-weight: bold;
+        }
+        .header-title {
+            background-color: #4CAF50;
+            color: white;
+            font-weight: bold;
+        }
+        /* Region cells styling */
+        .region-north {
+            background-color: #e8f7f5;
+            font-weight: bold;
+            color: #333;
+        }
+        .region-south {
+            background-color: #e8f7f5;
+            color: #333;
+        }
+        /* Data cells styling */
+        .data-cell {
+            background-color: #ffffff;
+            color: #000000;
+        }
+        /* Total row styling */
+        .total-row td {
+            background-color: #fcd980;
+            font-weight: bold;
+            color: #000000;
+            border: 1px solid #cfa23c;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Quarterly Sales Report</h2>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th rowspan="2" style="width: 20%;">Region</th>
+                    <th colspan="3" class="header-title">Quarterly Sales</th>
+                    <th rowspan="2" style="width: 25%;">Manager</th>
+                </tr>
+                <tr>
+                    <th style="width: 15%;">Q1</th>
+                    <th style="width: 15%;">Q2</th>
+                    <th style="width: 15%;">Q3</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td rowspan="2" class="region-north">North</td>
+                    <td class="data-cell">120</td>
+                    <td class="data-cell">150</td>
+                    <td class="data-cell">100</td>
+                    <td class="data-cell">Krushna</td>
+                </tr>
+                <tr>
+                    <td class="data-cell">90</td>
+                    <td class="data-cell">110</td>
+                    <td class="data-cell">130</td>
+                    <td class="data-cell">Balaji</td>
+                </tr>
+                <tr>
+                    <td class="region-south">South</td>
+                    <td class="data-cell">200</td>
+                    <td class="data-cell">180</td>
+                    <td class="data-cell">160</td>
+                    <td class="data-cell">Pandurang</td>
+                </tr>
+                <tr class="total-row">
+                    <td>Total</td>
+                    <td>410</td>
+                    <td>440</td>
+                    <td>390</td>
+                    <td>1240</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</body>
+</html>
