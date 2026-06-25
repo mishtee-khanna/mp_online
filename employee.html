@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Status Table</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+        }
+        
+        table {
+            width: 100%;
+            max-width: 1100px;
+            border-collapse: collapse;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        th {
+            background-color: #213547;
+            color: #ffffff;
+            font-weight: bold;
+            text-align: left;
+            padding: 16px 24px;
+            font-size: 15px;
+        }
+
+        td {
+            padding: 16px 24px;
+            color: #333333;
+            font-size: 15px;
+            vertical-align: middle;
+        }
+
+        /* Alternating row colors (Zebra striping) */
+        tbody tr:nth-of-type(even) {
+            background-color: #f9f9f9;
+        }
+        tbody tr:nth-of-type(odd) {
+            background-color: #ffffff;
+        }
+
+        /* Status Pill Badges */
+        .badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            color: #ffffff;
+            text-align: center;
+            min-width: 60px;
+        }
+
+        .badge.active {
+            background-color: #10b981; /* Green */
+        }
+
+        .badge.pending {
+            background-color: #f59e0b; /* Orange */
+        }
+
+        .badge.inactive {
+            background-color: #ef4444; /* Red/Brownish-Red */
+        }
+    </style>
+</head>
+<body>
+
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 25%;">Employee ID</th>
+                <th style="width: 25%;">Name</th>
+                <th style="width: 25%;">Department</th>
+                <th style="width: 25%;">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>EMP001</td>
+                <td>Raja Ravi</td>
+                <td>Engineering</td>
+                <td><span class="badge active">Active</span></td>
+            </tr>
+            <tr>
+                <td>EMP002</td>
+                <td>Ram Joshi</td>
+                <td>Marketing</td>
+                <td><span class="badge pending">Pending</span></td>
+            </tr>
+            <tr>
+                <td>EMP003</td>
+                <td>Narayan</td>
+                <td>Finance</td>
+                <td><span class="badge inactive">Inactive</span></td>
+            </tr>
+            <tr>
+                <td>EMP004</td>
+                <td>Pandurang</td>
+                <td>HR</td>
+                <td><span class="badge active">Active</span></td>
+            </tr>
+        </tbody>
+    </table>
+
+</body>
+</html>
