@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Data Table</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f4f8;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px;
+        }
+        h2 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #000000;
+        }
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            max-width: 900px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px;
+            font-size: 16px;
+            font-weight: bold;
+            border: 1px solid #e0e0e0;
+        }
+        td {
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            color: #333333;
+            font-size: 15px;
+        }
+        /* Zebra striping for rows */
+        tbody tr:nth-of-type(even) {
+            background-color: #f9f9f9;
+        }
+        tbody tr:nth-of-type(odd) {
+            background-color: #ffffff;
+        }
+        /* Styling the Total column */
+        td:last-child {
+            background-color: #edf7ed;
+            font-weight: bold;
+        }
+        /* Styling the bottom Total row */
+        .total-row {
+            background-color: #f2f2f2 !important;
+            font-weight: bold;
+        }
+        .total-row td {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Sales Data</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Salesman</th>
+                <th>Product A</th>
+                <th>Product B</th>
+                <th>Product C</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Ram</td>
+                <td>120</td>
+                <td>150</td>
+                <td>100</td>
+                <td>370</td>
+            </tr>
+            <tr>
+                <td>Radha</td>
+                <td>90</td>
+                <td>110</td>
+                <td>130</td>
+                <td>330</td>
+            </tr>
+            <tr>
+                <td>Narayan</td>
+                <td>200</td>
+                <td>180</td>
+                <td>160</td>
+                <td>540</td>
+            </tr>
+            <tr class="total-row">
+                <td>Total</td>
+                <td>410</td>
+                <td>440</td>
+                <td>390</td>
+                <td>1240</td>
+            </tr>
+        </tbody>
+    </table>
+
+</body>
+</html>
